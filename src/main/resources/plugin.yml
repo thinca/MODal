@@ -1,0 +1,4 @@
+name: 'MODal'
+main: 'org.vim_jp.modal.MODalPlugin'
+version: '0.1.0'
+api-version: '1.16'
