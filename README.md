@@ -13,7 +13,7 @@ MODal is a Minecraft MOD([SpigotMC](https://hub.spigotmc.org/) plugin) of vim-jp
 ## Build
 
 ```
-$ sbt assembly
+$ sbt package
 ```
 
 
