@@ -63,6 +63,10 @@ class MODalPlugin extends JavaPlugin:
         onLogBreak(player, block)
 
   class ArrowWarp extends Listener:
+    def isSafeBlock(block: Block): Boolean =
+      val blockType = block.getType
+      block.isPassable && blockType != Material.WATER && blockType != Material.LAVA
+
     @EventHandler
     def onProjectileHit(event: ProjectileHitEvent): Unit =
       val projectile = event.getEntity
@@ -81,6 +85,6 @@ class MODalPlugin extends JavaPlugin:
       val warpPos = hitBlock.getRelative(event.getHitBlockFace)
 
       if warpPos.getRelative(BlockFace.DOWN).getType.isSolid &&
-          warpPos.getType.isAir && warpPos.getRelative(BlockFace.UP).getType.isAir then
+          isSafeBlock(warpPos) && isSafeBlock(warpPos.getRelative(BlockFace.UP)) then
         arrow.remove()
         player.teleport(warpPos.getLocation.add(0.5, 0, 0.5).setDirection(player.getLocation.getDirection))
