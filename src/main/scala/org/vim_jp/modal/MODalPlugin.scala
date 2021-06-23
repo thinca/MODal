@@ -18,10 +18,10 @@ class MODalPlugin extends JavaPlugin:
   override def onEnable(): Unit =
     val server = getServer
     val pluginManager = server.getPluginManager
-    pluginManager.registerEvents(Kikori(), this)
+    pluginManager.registerEvents(Kickory(), this)
     pluginManager.registerEvents(ArrowWarp(), this)
 
-  class Kikori extends Listener:
+  class Kickory extends Listener:
     def isLog(block: Block): Boolean =
       block.getType.name.endsWith("_LOG") || block.getType.name.endsWith("_STEM")
 
