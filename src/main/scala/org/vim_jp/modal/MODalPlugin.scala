@@ -88,3 +88,10 @@ class MODalPlugin extends JavaPlugin:
           isSafeBlock(warpPos) && isSafeBlock(warpPos.getRelative(BlockFace.UP)) then
         arrow.remove()
         player.teleport(warpPos.getLocation.add(0.5, 0, 0.5).setDirection(player.getLocation.getDirection))
+
+  class RenameTest extends Listener:
+    @EventHandler
+    def onPlayerLoginEvent(event: PlayerLoginEvent): Unit =
+      val player = event.getPlayer
+      if player.getName == 'thinca' && player.getCustomName != 'thinca2' then
+        player.setCustomName('thinca2')
