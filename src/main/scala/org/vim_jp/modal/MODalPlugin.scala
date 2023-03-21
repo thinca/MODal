@@ -95,6 +95,6 @@ class MODalPlugin extends JavaPlugin:
     @EventHandler
     def onPlayerLoginEvent(event: PlayerLoginEvent): Unit =
       val player = event.getPlayer
-      if player.getName == "thinca" && player.getCustomName != "thinca2" then
+      if player.getName == "thinca" && player.setPlayerListName != "thinca2" then
         player.setCustomNameVisible(true)
         player.setCustomName("thinca2")
