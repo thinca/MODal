@@ -97,5 +97,3 @@ class MODalPlugin extends JavaPlugin:
       val player = event.getPlayer
       if player.getName == "thinca" && player.getPlayerListName != "thinca2" then
         player.setPlayerListName("thinca2")
-      if player.getName == "thinca" && player.getDisplayName != "thinca2" then
-        player.setDisplayName("thinca2")
