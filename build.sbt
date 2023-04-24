@@ -7,5 +7,5 @@ lazy val root = project
     scalaVersion := "3.2.2",
 
     resolvers += "spigot-repo" at "https://hub.spigotmc.org/nexus/content/repositories/snapshots/",
-    libraryDependencies += "org.spigotmc" % "spigot-api" % "1.16.5-R0.1-SNAPSHOT",
+    libraryDependencies += "org.spigotmc" % "spigot-api" % "1.19.4-R0.1-SNAPSHOT",
   )
