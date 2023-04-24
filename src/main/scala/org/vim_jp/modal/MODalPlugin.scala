@@ -24,9 +24,9 @@ class MODalPlugin extends JavaPlugin:
 
   class Kikori extends Listener:
     def isLog(block: Block): Boolean =
-      block.getType.name.endsWith("_LOG") || block.getType.name.endsWith(
-        "_STEM"
-      )
+      block.getType.name.endsWith("_LOG") ||
+        block.getType.name.endsWith("_STEM") ||
+        block.getType.name == "MANGROVE_ROOTS"
 
     def tryBreak(player: Player, block: Block): Unit =
       new BukkitRunnable {
