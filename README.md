@@ -7,7 +7,10 @@ MODal is a Minecraft MOD([SpigotMC](https://hub.spigotmc.org/) plugin) of vim-jp
 
 - Scala 3
 - sbt
-  - https://www.scala-sbt.org/
+    - https://www.scala-sbt.org/
+- (OPTIONAL) PlugManX: https://github.com/TheBlackEntity/PlugMan/
+    1. Download it (from Spigot portal site)
+    2. Expand it to .local/data/plugins/.jar
 
 ## Build
 
