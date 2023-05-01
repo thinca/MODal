@@ -10,7 +10,7 @@ MODal is a Minecraft MOD([SpigotMC](https://hub.spigotmc.org/) plugin) of vim-jp
     - https://www.scala-sbt.org/
 - (OPTIONAL) PlugManX: https://github.com/TheBlackEntity/PlugMan/
     1. Download it (from Spigot portal site)
-    2. Expand it to .local/data/plugins/.jar
+    2. Expand it to `.local/data/plugins/PlugManX.jar`
 
 ## Build
 
@@ -43,4 +43,16 @@ You can set ops player id with the envar (also be able to set by direnv).
 
 ## Features
 
+Players can become any Mode.
+Players in each Mode have various rights and advantages.
+
+### How to switch mode
+
 TBD
+
+### Advantages of each Modes
+
+#### Farmer
+
+Reaping crops with seeds in inventory automatically sows those seeds when harvested.
+It also automatically cancels the reaping of crops that cannot yet be harvested.
