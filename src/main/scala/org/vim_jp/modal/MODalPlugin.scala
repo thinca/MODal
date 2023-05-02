@@ -1,8 +1,13 @@
 package org.vim_jp.modal
 
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Server
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.command.Command
 import org.bukkit.block.Block
+import org.bukkit.block.data.Ageable
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.entity.SpectralArrow
@@ -10,17 +15,95 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.inventory.ItemStack
+import org.bukkit.metadata.MetadataValue
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 
 class MODalPlugin extends JavaPlugin:
   outer =>
 
+  val MODAL_MODE_METADATA_LABEL: String = "org.vim_jp.modal:mode"
+  val MODAL_VALID_MODES = Set("farmer")
+
   override def onEnable(): Unit =
     val server = getServer
     val pluginManager = server.getPluginManager
     pluginManager.registerEvents(Kikori(), this)
+    pluginManager.registerEvents(Farmer(), this)
     pluginManager.registerEvents(ArrowWarp(), this)
+    this.getCommand("change").setExecutor(CommandModal())
+
+  class CommandModal extends CommandExecutor:
+    override def onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array[String]
+    ): Boolean =
+      val player = sender match
+        case player: Player => player
+        case _              => return false
+
+      if args.length != 1 then return false
+
+      val mode = args(0)
+      if !MODAL_VALID_MODES.contains(mode) then return false
+
+      player.setMetadata(
+        MODAL_MODE_METADATA_LABEL,
+        FixedMetadataValue(outer, mode)
+      )
+
+      // TODO: use args to decide target
+      // like `/modal:change @s farmer`
+      true
+
+  // TODO: create TabCompleteEvent for the command
+
+  class Farmer extends Listener:
+    def seedOf(block: Block): Material =
+      block.getType.name match
+        case "WHEAT"    => Material.WHEAT_SEEDS
+        case "POTATOES" => Material.POTATO
+        case _          => null
+
+    @EventHandler
+    def onBlockBreak(event: BlockBreakEvent): Unit =
+      if event.isCancelled then return
+
+      val player = event.getPlayer
+
+      val meta = player.getMetadata(MODAL_MODE_METADATA_LABEL)
+      if meta.isEmpty() || meta.get(0).asString() != "farmer" then return
+
+      val block = event.getBlock: Block
+
+      val seed = seedOf(block)
+      if seed == null then return
+
+      val ageable = block.getBlockData match
+        case ageable: Ageable => ageable
+        case _                => return
+      if ageable.getAge != ageable.getMaximumAge then
+        event.setCancelled(true)
+        return
+
+      // consume seed
+      val item = ItemStack(seed)
+      val removed = player.getInventory().removeItem(item)
+      // (there's no seed)
+      if !removed.isEmpty then return
+
+      // set block to younuest state
+      val typ = block.getType
+      val loc = block.getLocation()
+      new BukkitRunnable {
+        override def run(): Unit =
+          val newBlock = loc.getBlock
+          newBlock.setType(typ)
+      }.runTask(outer)
 
   class Kikori extends Listener:
     def isLog(block: Block): Boolean =
