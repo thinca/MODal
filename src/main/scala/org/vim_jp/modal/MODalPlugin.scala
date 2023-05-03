@@ -16,16 +16,17 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.metadata.MetadataValue
 import org.bukkit.metadata.FixedMetadataValue
+import org.bukkit.metadata.MetadataValue
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 
+object MODalPlugin:
+  val MODE_METADATA_LABEL: String = "org.vim_jp.modal:mode"
+  val VALID_MODES = Set("farmer")
+
 class MODalPlugin extends JavaPlugin:
   outer =>
-
-  val MODAL_MODE_METADATA_LABEL: String = "org.vim_jp.modal:mode"
-  val MODAL_VALID_MODES = Set("farmer")
 
   override def onEnable(): Unit =
     val server = getServer
@@ -49,10 +50,10 @@ class MODalPlugin extends JavaPlugin:
       if args.length != 1 then return false
 
       val mode = args(0)
-      if !MODAL_VALID_MODES.contains(mode) then return false
+      if !MODalPlugin.VALID_MODES.contains(mode) then return false
 
       player.setMetadata(
-        MODAL_MODE_METADATA_LABEL,
+        MODalPlugin.MODE_METADATA_LABEL,
         FixedMetadataValue(outer, mode)
       )
 
@@ -75,7 +76,7 @@ class MODalPlugin extends JavaPlugin:
 
       val player = event.getPlayer
 
-      val meta = player.getMetadata(MODAL_MODE_METADATA_LABEL)
+      val meta = player.getMetadata(MODalPlugin.MODE_METADATA_LABEL)
       if meta.isEmpty() || meta.get(0).asString() != "farmer" then return
 
       val block = event.getBlock: Block
