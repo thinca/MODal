@@ -2,13 +2,14 @@ package org.vim_jp.modal
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.Server
+import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
+import org.bukkit.block.data.Ageable
+import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.command.Command
-import org.bukkit.block.Block
-import org.bukkit.block.data.Ageable
-import org.bukkit.block.BlockFace
 import org.bukkit.entity.Player
 import org.bukkit.entity.SpectralArrow
 import org.bukkit.event.EventHandler
@@ -18,15 +19,18 @@ import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.metadata.MetadataValue
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 
 object MODalPlugin:
-  val MODE_METADATA_LABEL: String = "org.vim_jp.modal:mode"
+  val MODE_DATA_KEY: String = "mode"
   val VALID_MODES = Set("farmer")
 
 class MODalPlugin extends JavaPlugin:
   outer =>
+
+  protected val modeDataKey = NamespacedKey(outer, MODalPlugin.MODE_DATA_KEY)
 
   override def onEnable(): Unit =
     val server = getServer
@@ -52,10 +56,8 @@ class MODalPlugin extends JavaPlugin:
       val mode = args(0)
       if !MODalPlugin.VALID_MODES.contains(mode) then return false
 
-      player.setMetadata(
-        MODalPlugin.MODE_METADATA_LABEL,
-        FixedMetadataValue(outer, mode)
-      )
+      val container = player.getPersistentDataContainer()
+      container.set(outer.modeDataKey, PersistentDataType.STRING, mode)
 
       // TODO: use args to decide target
       // like `/modal:change @s farmer`
@@ -76,8 +78,9 @@ class MODalPlugin extends JavaPlugin:
 
       val player = event.getPlayer
 
-      val meta = player.getMetadata(MODalPlugin.MODE_METADATA_LABEL)
-      if meta.isEmpty() || meta.get(0).asString() != "farmer" then return
+      val container = player.getPersistentDataContainer()
+      val mode = container.get(outer.modeDataKey, PersistentDataType.STRING)
+      if mode != "farmer" then return
 
       val block = event.getBlock: Block
 
