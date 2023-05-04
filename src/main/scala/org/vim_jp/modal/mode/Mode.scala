@@ -30,7 +30,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
   def getBossBarKey(player: Player): NamespacedKey =
     return NamespacedKey(
       plugin,
-      "mode-bossbar-" + player.getUniqueId().toString
+      s"mode-bossbar-${player.getUniqueId}"
     )
 
   def getBossBar(player: Player): BossBar =
@@ -44,7 +44,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
       case null =>
         Bukkit.createBossBar(
           getBossBarKey(player),
-          "mode: " + MODE_NAME,
+          s"mode: ${MODE_NAME}",
           BarColor.YELLOW,
           BarStyle.SOLID
         )
@@ -55,7 +55,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
       .spigot()
       .sendMessage(
         ChatMessageType.ACTION_BAR,
-        new TextComponent("mode changed: " + MODE_NAME)
+        TextComponent(s"mode changed: ${MODE_NAME}")
       )
 
     val bar = getOrNewBossBar(player)
