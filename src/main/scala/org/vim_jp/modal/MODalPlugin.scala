@@ -54,9 +54,6 @@ class MODalPlugin extends JavaPlugin:
       true
 
     def setMode(player: Player, mode: String): Unit =
-      modes
-        .filter(m => m.MODE_NAME != mode && m.isActive(player))
-        .foreach(m => m.inactivate(player))
       modes.filter(m => m.MODE_NAME == mode).foreach(m => m.activate(player))
 
   // TODO: create TabCompleteEvent for the command
