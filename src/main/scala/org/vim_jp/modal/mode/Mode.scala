@@ -44,7 +44,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
       case null =>
         Bukkit.createBossBar(
           getBossBarKey(player),
-          s"mode: ${MODE_NAME}",
+          "",
           BarColor.YELLOW,
           BarStyle.SOLID
         )
@@ -60,15 +60,18 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
 
     val bar = getOrNewBossBar(player)
     bar.setProgress(1)
+    bar.setTitle(s"mode: ${MODE_NAME}")
     bar.addPlayer(player)
-    bar.show()
+    bar.setVisible(true)
 
   def inactivate(player: Player): Unit =
     val container = player.getPersistentDataContainer()
     container.remove(plugin.modeDataKey)
 
     val bar = getBossBar(player)
-    if bar != null then bar.removePlayer(player)
+    if bar != null then
+      bar.removePlayer(player)
+      bar.setVisible(false)
 
   @EventHandler
   def onPlayerJoin(event: PlayerJoinEvent): Unit =
