@@ -1,6 +1,5 @@
 package org.vim_jp.modal.mode;
 
-import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.persistence.PersistentDataType
