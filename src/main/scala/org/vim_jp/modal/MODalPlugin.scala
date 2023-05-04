@@ -1,5 +1,4 @@
 package org.vim_jp.modal
-
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
@@ -13,27 +12,26 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
-import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
-
 import org.vim_jp.modal.mode.FarmerMode
 
 object MODalPlugin:
   val MODE_DATA_KEY: String = "mode"
-  val VALID_MODES = Set("farmer")
 
 class MODalPlugin extends JavaPlugin:
   outer =>
 
   val modeDataKey = NamespacedKey(outer, MODalPlugin.MODE_DATA_KEY)
+  val modes = Set(FarmerMode(this))
 
   override def onEnable(): Unit =
     val server = getServer
     val pluginManager = server.getPluginManager
     pluginManager.registerEvents(Kikori(), this)
-    pluginManager.registerEvents(FarmerMode(this), this)
     pluginManager.registerEvents(ArrowWarp(), this)
+    modes.foreach(m => pluginManager.registerEvents(m, this))
+
     this.getCommand("change").setExecutor(CommandModal())
 
   class CommandModal extends CommandExecutor:
@@ -49,15 +47,17 @@ class MODalPlugin extends JavaPlugin:
 
       if args.length != 1 then return false
 
-      val mode = args(0)
-      if !MODalPlugin.VALID_MODES.contains(mode) then return false
-
-      val container = player.getPersistentDataContainer()
-      container.set(outer.modeDataKey, PersistentDataType.STRING, mode)
+      this.setMode(player, args(0))
 
       // TODO: use args to decide target
       // like `/modal:change @s farmer`
       true
+
+    def setMode(player: Player, mode: String): Unit =
+      modes
+        .filter(m => m.MODE_NAME != mode && m.isActive(player))
+        .foreach(m => m.inactivate(player))
+      modes.filter(m => m.MODE_NAME == mode).foreach(m => m.activate(player))
 
   // TODO: create TabCompleteEvent for the command
 
