@@ -8,6 +8,7 @@ lazy val root = project
 
     scalaVersion := scala3Version,
     scalacOptions ++= Seq(
+      "-deprecation",
       "-Wunused:all",
     ),
 
