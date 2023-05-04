@@ -4,7 +4,7 @@ build:
 
 install: build
 	mkdir -p ./.local/data/plugins/
-	cp ./target/scala-3.2.2/modal_*.jar ./.local/data/plugins/
+	cp ./target/scala-3.3.0-RC5/modal_*.jar ./.local/data/plugins/
 .PHONY: install
 
 start: install
