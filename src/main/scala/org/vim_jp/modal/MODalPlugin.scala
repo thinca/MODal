@@ -32,9 +32,14 @@ class MODalPlugin extends JavaPlugin:
     pluginManager.registerEvents(ArrowWarp(), this)
     modes.foreach(m => pluginManager.registerEvents(m, this))
 
-    this.getCommand("change").setExecutor(CommandModal())
+    this.getCommand("change").setExecutor(ChangeCommand())
+    this.getCommand("inactivate").setExecutor(InactivateCommand())
 
-  class CommandModal extends CommandExecutor:
+  // A definition for the command to target caller-own.
+  abstract class PlayerCommand extends CommandExecutor:
+
+    def action(player: Player, args: Array[String]): Boolean
+
     override def onCommand(
         sender: CommandSender,
         command: Command,
@@ -44,19 +49,19 @@ class MODalPlugin extends JavaPlugin:
       val player = sender match
         case player: Player => player
         case _              => return false
+      action(player, args)
 
+  class ChangeCommand extends PlayerCommand:
+    def action(player: Player, args: Array[String]): Boolean =
       if args.length != 1 then return false
-
-      this.setMode(player, args(0))
-
-      // TODO: use args to decide target
-      // like `/modal:change @s farmer`
+      val mode = args(0)
+      modes.filter(m => m.MODE_NAME == mode).foreach(m => m.activate(player))
       true
 
-    def setMode(player: Player, mode: String): Unit =
-      modes.filter(m => m.MODE_NAME == mode).foreach(m => m.activate(player))
-
-  // TODO: create TabCompleteEvent for the command
+  class InactivateCommand extends PlayerCommand:
+    def action(player: Player, args: Array[String]): Boolean =
+      modes.filter(m => m.isActive(player)).foreach(m => m.inactivate(player))
+      true
 
   class Kikori extends Listener:
     def isLog(block: Block): Boolean =
