@@ -16,8 +16,6 @@ import org.vim_jp.modal.MODalPlugin
 
 abstract class Mode(plugin: MODalPlugin) extends Listener:
   val MODE_NAME: String
-  def bossBarKey(): NamespacedKey =
-    new NamespacedKey(plugin, "mode-bossbar-" + MODE_NAME)
 
   def isActive(player: Player): Boolean =
     val container = player.getPersistentDataContainer()
@@ -29,17 +27,23 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
     container.set(plugin.modeDataKey, PersistentDataType.STRING, MODE_NAME)
     notifyInActive(player)
 
+  def getBossBarKey(player: Player): NamespacedKey =
+    return NamespacedKey(
+      plugin,
+      "mode-bossbar-" + player.getUniqueId().toString
+    )
+
   def getBossBar(player: Player): BossBar =
-    val key =
-      new NamespacedKey(plugin, "mode-bossbar-" + player.getUniqueId().toString)
+    val key = getBossBarKey(player)
     return Bukkit.getBossBar(key)
 
   def getOrNewBossBar(player: Player): BossBar =
-    val bar = getBossBar(player)
+    val key = getBossBarKey(player)
+    val bar = Bukkit.getBossBar(key)
     return bar match
       case null =>
         Bukkit.createBossBar(
-          bossBarKey(),
+          getBossBarKey(player),
           "mode: " + MODE_NAME,
           BarColor.YELLOW,
           BarStyle.SOLID
