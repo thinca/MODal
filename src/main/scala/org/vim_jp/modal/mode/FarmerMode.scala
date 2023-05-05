@@ -11,6 +11,8 @@ import org.vim_jp.modal.MODalPlugin
 
 class FarmerMode(plugin: MODalPlugin) extends Mode(plugin):
   override val MODE_NAME: String = "farmer"
+  override val MODE_EXP_COST: Int = 5
+  override val MODE_MATERIAL: Material = Material.GOLDEN_HOE
 
   def seedOf(block: Block): Material =
     block.getType.name match
