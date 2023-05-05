@@ -1,6 +1,7 @@
 package org.vim_jp.modal
 
 import org.bukkit.ChatColor
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
@@ -14,6 +15,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.mode.FarmerMode
@@ -44,9 +46,10 @@ class MODalPlugin extends JavaPlugin:
     if stream != null then
       val br = BufferedReader(InputStreamReader(stream))
       val hash = br.readLine
-      server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled: ${ChatColor.YELLOW}${hash}")
-    else
-      server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled")
+      server.broadcastMessage(
+        s"${ChatColor.GREEN}MODal enabled: ${ChatColor.YELLOW}${hash}"
+      )
+    else server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled")
 
   // A definition for the command to target caller-own.
   abstract class PlayerCommand extends CommandExecutor:
@@ -66,9 +69,19 @@ class MODalPlugin extends JavaPlugin:
 
   class ChangeCommand extends PlayerCommand:
     def action(player: Player, args: Array[String]): Boolean =
-      if args.length != 1 then return false
-      val mode = args(0)
-      modes.filter(m => m.MODE_NAME == mode).foreach(m => m.activate(player))
+      args.length match
+        case 0 =>
+          // TODO: show menu to user deliver the item to change mode
+          val inv = Bukkit.createInventory(player, InventoryType.ANVIL)
+          player.openInventory(inv)
+        case 1 => {
+          val mode = args(0)
+          modes
+            .filter(m => m.MODE_NAME == mode)
+            .foreach(m => m.activate(player))
+        }
+        case _ => return false
+
       true
 
   class InactivateCommand extends PlayerCommand:

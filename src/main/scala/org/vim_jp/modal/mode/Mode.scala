@@ -11,11 +11,14 @@ import org.bukkit.boss.BossBar
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.inventory.InventoryType.SlotType
 import org.bukkit.event.inventory.PrepareAnvilEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.inventory.AnvilInventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitRunnable
@@ -90,7 +93,8 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
     val player = event.getPlayer
     if isActive(player) then notifyInActive(player)
 
-  private def createKnowledgeBook(): ItemStack =
+  private def createModeChanger(): ItemStack =
+    // Use Knowledge book as Mode Changer
     val book = ItemStack(Material.KNOWLEDGE_BOOK)
     val meta = book.getItemMeta
     meta.getPersistentDataContainer.set(
@@ -98,20 +102,30 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
       PersistentDataType.STRING,
       MODE_NAME
     )
-    meta.setLore(List(s"mode: ${MODE_NAME}").asJava)
+    meta.setDisplayName(s"Mode changer: ${MODE_NAME}")
     book.setItemMeta(meta)
     return book
 
-  // Prepare a recipe to create Knowledge book to change mode
+  private def isModeChanger(item: ItemStack): Boolean =
+    if item == null then return false
+    if item.getType() != Material.KNOWLEDGE_BOOK then return false
+
+    // if the book has no tag for the mode
+    MODE_NAME == item.getItemMeta.getPersistentDataContainer.get(
+      plugin.modeDataKey,
+      PersistentDataType.STRING
+    )
+
+  // Prepare a recipe to create Knowledge book
   @EventHandler
   def onPrepareAnvil(event: PrepareAnvilEvent): Unit =
-    val inventory = event.getInventory()
+    val inventory: AnvilInventory = event.getInventory()
 
     if !inventory.contains(MODE_MATERIAL) then return
     if !inventory.contains(Material.BOOK) then return
 
     // Set result item (Knowledge book with the meta data)
-    event.setResult(createKnowledgeBook())
+    event.setResult(createModeChanger())
 
     // Set EXP point cost
     new BukkitRunnable {
@@ -119,7 +133,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
         inventory.setRepairCost(MODE_EXP_COST)
     }.runTask(plugin)
 
-  // Handle creation of the Knowledge book to change mode
+  // Handle creation of the Knowledge book
   @EventHandler
   def onInventoryClick(event: InventoryClickEvent): Unit =
     // if the viewer is not a player, ignore it
@@ -130,25 +144,21 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
       case _              => return
 
     // if the cursor is not on the RESULT slot of the ANVIL, ignore it
-    val inventory = event.getClickedInventory()
-    if inventory.getType() != InventoryType.ANVIL then return
+    val anvil = event.getClickedInventory match
+      case anvil: AnvilInventory => anvil
+      case _                     => return
     if event.getSlotType() != InventoryType.SlotType.RESULT then return
 
-    // if the current item is not Knowledge book, ignore it
-    val current = event.getCurrentItem()
-    if current == null then return
-    if current.getType() != Material.KNOWLEDGE_BOOK then return
+    // if the item is not Mode Changer, ignore it
+    val item = event.getCurrentItem
+    if !isModeChanger(item) then return
 
-    // if the book has no tag for the mode, ignore it
-    val metadata = current.getItemMeta.getPersistentDataContainer.get(
-      plugin.modeDataKey,
-      PersistentDataType.STRING
-    )
-    if metadata != MODE_NAME then return
+    // if the EXP cost is shortage, ignore it
+    if anvil.getRepairCost > player.getLevel then return
 
     // consume materials
-    val contents = inventory.getContents()
-    inventory.setContents(
+    val contents = anvil.getContents()
+    anvil.setContents(
       contents.map(c =>
         c match
           case null => c
@@ -160,5 +170,21 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
       )
     )
 
-    // give the book to the viewer
-    player.setItemOnCursor(current)
+    new BukkitRunnable {
+      override def run(): Unit =
+        // give the item to the viewer
+        player.setItemOnCursor(item)
+        // consume EXP cost
+        player.setLevel(player.getLevel - anvil.getRepairCost)
+    }.runTask(plugin)
+
+  // Handle usage of the Mode Changer
+  @EventHandler
+  def onPlayerInteract(event: PlayerInteractEvent): Unit =
+    val action = event.getAction
+    if action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK
+    then return
+
+    if !isModeChanger(event.getItem) then return
+
+    activate(event.getPlayer)
