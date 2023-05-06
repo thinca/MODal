@@ -41,7 +41,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
     book.setItemMeta(meta)
     return book
 
-  private def isModeChanger(item: ItemStack): String =
+  private def getChangingMode(item: ItemStack): String =
     if item == null then return null
     if item.getType() != Material.KNOWLEDGE_BOOK then return null
 
@@ -93,7 +93,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
 
     // if the item is not Mode Changer, ignore it
     val item = event.getCurrentItem
-    val modeName = isModeChanger(item)
+    val modeName = getChangingMode(item)
     if modeName == null then return
 
     // if the EXP cost is shortage, ignore it
@@ -128,7 +128,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
     if action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK
     then return
 
-    val modeName = isModeChanger(event.getItem)
+    val modeName = getChangingMode(event.getItem)
     if modeName == null then return
 
     ModeChanging.ModeByName(modeName).activate(event.getPlayer)
