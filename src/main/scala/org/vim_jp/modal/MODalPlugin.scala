@@ -76,19 +76,9 @@ class MODalPlugin extends JavaPlugin:
 
   class ChangeCommand extends PlayerCommand:
     def action(player: Player, args: Array[String]): Boolean =
-      args.length match
-        case 0 =>
-          // TODO: show menu to user deliver the item to change mode
-          val inv = Bukkit.createInventory(player, InventoryType.ANVIL)
-          player.openInventory(inv)
-        case 1 => {
-          val mode = args(0)
-          modes
-            .filter(m => m.MODE_NAME == mode)
-            .foreach(m => m.activate(player))
-        }
-        case _ => return false
-
+      if args.length != 1 then return false
+      val mode = args(0)
+      modes.filter(m => m.MODE_NAME == mode).foreach(m => m.activate(player))
       true
 
   class InactivateCommand extends PlayerCommand:
