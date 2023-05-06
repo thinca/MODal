@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.mode.FarmerMode
+import org.vim_jp.modal.mode.ModeChanging
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -34,10 +35,16 @@ class MODalPlugin extends JavaPlugin:
 
   override def onEnable(): Unit =
     val server = getServer
+
+    // TODO: When the Kikori implements Mode, "ModeChanging" should call registerEvents
     val pluginManager = server.getPluginManager
+    pluginManager.registerEvents(ModeChanging(this), this)
     pluginManager.registerEvents(Kikori(), this)
     pluginManager.registerEvents(ArrowWarp(), this)
-    modes.foreach(m => pluginManager.registerEvents(m, this))
+    modes.foreach(m => {
+      ModeChanging.registerMode(m)
+      pluginManager.registerEvents(m, this)
+    })
 
     this.getCommand("change").setExecutor(ChangeCommand())
     this.getCommand("inactivate").setExecutor(InactivateCommand())
