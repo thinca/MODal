@@ -20,12 +20,12 @@ import org.vim_jp.modal.MODalPlugin
 import scala.jdk.CollectionConverters._
 
 object ModeChanging:
-  private val ModeForMaterial = mutable.Map[Material, Mode]()
-  private val ModeByName = mutable.Map[String, Mode]()
+  private val modeForMaterial = mutable.Map[Material, Mode]()
+  private val modeByName = mutable.Map[String, Mode]()
 
   def registerMode(mode: Mode): Unit =
-    ModeForMaterial(mode.MODE_MATERIAL) = mode
-    ModeByName(mode.MODE_NAME) = mode
+    modeForMaterial(mode.MODE_MATERIAL) = mode
+    modeByName(mode.MODE_NAME) = mode
 
 class ModeChanging(plugin: MODalPlugin) extends Listener:
   private def createModeChanger(modeName: String): ItemStack =
@@ -56,7 +56,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
   def onPrepareAnvil(event: PrepareAnvilEvent): Unit =
     val inv: AnvilInventory = event.getInventory()
 
-    val mode = ModeChanging.ModeForMaterial(
+    val mode = ModeChanging.modeForMaterial(
       inv.getItem(inv.first(Material.BOOK) match
           case 0 => 1
           case 1 => 0
@@ -131,4 +131,4 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
     val modeName = getChangingMode(event.getItem)
     if modeName == null then return
 
-    ModeChanging.ModeByName(modeName).activate(event.getPlayer)
+    ModeChanging.modeByName(modeName).activate(event.getPlayer)
