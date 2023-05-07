@@ -17,6 +17,7 @@ import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.mode.FarmerMode
+import org.vim_jp.modal.mode.ModeChanging
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -32,10 +33,16 @@ class MODalPlugin extends JavaPlugin:
 
   override def onEnable(): Unit =
     val server = getServer
+
+    // TODO: When the Kikori implements Mode, "ModeChanging" should call registerEvents
     val pluginManager = server.getPluginManager
+    pluginManager.registerEvents(ModeChanging(this), this)
     pluginManager.registerEvents(Kikori(), this)
     pluginManager.registerEvents(ArrowWarp(), this)
-    modes.foreach(m => pluginManager.registerEvents(m, this))
+    modes.foreach(m => {
+      ModeChanging.registerMode(m)
+      pluginManager.registerEvents(m, this)
+    })
 
     this.getCommand("change").setExecutor(ChangeCommand())
     this.getCommand("inactivate").setExecutor(InactivateCommand())
@@ -44,9 +51,10 @@ class MODalPlugin extends JavaPlugin:
     if stream != null then
       val br = BufferedReader(InputStreamReader(stream))
       val hash = br.readLine
-      server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled: ${ChatColor.YELLOW}${hash}")
-    else
-      server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled")
+      server.broadcastMessage(
+        s"${ChatColor.GREEN}MODal enabled: ${ChatColor.YELLOW}${hash}"
+      )
+    else server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled")
 
   // A definition for the command to target caller-own.
   abstract class PlayerCommand extends CommandExecutor:

@@ -3,6 +3,7 @@ package org.vim_jp.modal.mode;
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.BarColor
 import org.bukkit.boss.BarStyle
@@ -14,8 +15,12 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.persistence.PersistentDataType
 import org.vim_jp.modal.MODalPlugin
 
+import scala.jdk.CollectionConverters._
+
 abstract class Mode(plugin: MODalPlugin) extends Listener:
   val MODE_NAME: String
+  val MODE_EXP_COST: Int
+  val MODE_MATERIAL: Material
 
   def isActive(player: Player): Boolean =
     val container = player.getPersistentDataContainer()
@@ -27,17 +32,17 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
     container.set(plugin.modeDataKey, PersistentDataType.STRING, MODE_NAME)
     notifyInActive(player)
 
-  def getBossBarKey(player: Player): NamespacedKey =
+  private def getBossBarKey(player: Player): NamespacedKey =
     return NamespacedKey(
       plugin,
       s"mode-bossbar-${player.getUniqueId}"
     )
 
-  def getBossBar(player: Player): BossBar =
+  private def getBossBar(player: Player): BossBar =
     val key = getBossBarKey(player)
     return Bukkit.getBossBar(key)
 
-  def getOrNewBossBar(player: Player): BossBar =
+  private def getOrNewBossBar(player: Player): BossBar =
     val key = getBossBarKey(player)
     val bar = Bukkit.getBossBar(key)
     return bar match
@@ -50,7 +55,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
         )
       case _ => bar
 
-  def notifyInActive(player: Player): Unit =
+  private def notifyInActive(player: Player): Unit =
     player
       .spigot()
       .sendMessage(
@@ -73,6 +78,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
       bar.removePlayer(player)
       bar.setVisible(false)
 
+  // Notify the player if they having any mode
   @EventHandler
   def onPlayerJoin(event: PlayerJoinEvent): Unit =
     val player = event.getPlayer
