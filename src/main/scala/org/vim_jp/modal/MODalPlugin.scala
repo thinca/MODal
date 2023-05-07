@@ -1,4 +1,6 @@
 package org.vim_jp.modal
+
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
@@ -15,6 +17,9 @@ import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.mode.FarmerMode
+
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 object MODalPlugin:
   val MODE_DATA_KEY: String = "mode"
@@ -34,6 +39,14 @@ class MODalPlugin extends JavaPlugin:
 
     this.getCommand("change").setExecutor(ChangeCommand())
     this.getCommand("inactivate").setExecutor(InactivateCommand())
+
+    val stream = outer.getResource("commit_hash")
+    if stream != null then
+      val br = BufferedReader(InputStreamReader(stream))
+      val hash = br.readLine
+      server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled: ${ChatColor.YELLOW}${hash}")
+    else
+      server.broadcastMessage(s"${ChatColor.GREEN}MODal enabled")
 
   // A definition for the command to target caller-own.
   abstract class PlayerCommand extends CommandExecutor:

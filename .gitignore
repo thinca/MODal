@@ -25,3 +25,7 @@ local.sbt
 metals.sbt
 
 *.class
+
+# put a commit hash here by `git rev-parse --short @ > src/main/resources/commit_hash`
+# to embedding version info to .jar
+/src/main/resources/commit_hash
