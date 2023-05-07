@@ -11,17 +11,8 @@ import org.bukkit.boss.BossBar
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryType
-import org.bukkit.event.inventory.InventoryType.SlotType
-import org.bukkit.event.inventory.PrepareAnvilEvent
-import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.inventory.AnvilInventory
-import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
-import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.MODalPlugin
 
 import scala.jdk.CollectionConverters._

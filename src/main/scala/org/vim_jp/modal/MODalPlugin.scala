@@ -1,7 +1,6 @@
 package org.vim_jp.modal
 
 import org.bukkit.ChatColor
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
@@ -15,7 +14,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
-import org.bukkit.event.inventory.InventoryType
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.mode.FarmerMode
