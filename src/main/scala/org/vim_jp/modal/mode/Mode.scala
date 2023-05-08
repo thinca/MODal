@@ -30,7 +30,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
   def activate(player: Player): Unit =
     val container = player.getPersistentDataContainer()
     container.set(plugin.modeDataKey, PersistentDataType.STRING, MODE_NAME)
-    notifyInActive(player)
+    notifyActive(player)
 
   private def getBossBarKey(player: Player): NamespacedKey =
     return NamespacedKey(
@@ -55,7 +55,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
         )
       case _ => bar
 
-  private def notifyInActive(player: Player): Unit =
+  private def notifyActive(player: Player): Unit =
     player
       .spigot()
       .sendMessage(
@@ -82,4 +82,4 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
   @EventHandler
   def onPlayerJoin(event: PlayerJoinEvent): Unit =
     val player = event.getPlayer
-    if isActive(player) then notifyInActive(player)
+    if isActive(player) then notifyActive(player)
