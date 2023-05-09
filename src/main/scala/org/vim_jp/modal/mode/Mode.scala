@@ -69,7 +69,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
     bar.addPlayer(player)
     bar.setVisible(true)
 
-    getServer().broadcastMessage(
+    plugin.getServer.broadcastMessage(
       s"${player.getDisplayName()} mode changed to ${MODE_NAME}"
     )
 
