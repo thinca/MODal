@@ -69,6 +69,10 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
     bar.addPlayer(player)
     bar.setVisible(true)
 
+    plugin.getServer.broadcastMessage(
+      s"${player.getDisplayName()} mode changed to ${MODE_NAME}"
+    )
+
   def inactivate(player: Player): Unit =
     val container = player.getPersistentDataContainer()
     container.remove(plugin.modeDataKey)
