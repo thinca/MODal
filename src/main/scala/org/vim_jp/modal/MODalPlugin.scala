@@ -23,12 +23,12 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object MODalPlugin:
-  val MODE_DATA_KEY: String = "mode"
+  val MODE_NAME_DATA_KEY: String = "mode-name"
 
 class MODalPlugin extends JavaPlugin:
   outer =>
 
-  val modeDataKey = NamespacedKey(outer, MODalPlugin.MODE_DATA_KEY)
+  val modeNameDataKey = NamespacedKey(outer, MODalPlugin.MODE_NAME_DATA_KEY)
   val modes = Set(FarmerMode(this))
 
   override def onEnable(): Unit =

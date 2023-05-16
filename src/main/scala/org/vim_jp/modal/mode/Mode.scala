@@ -24,12 +24,12 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
 
   def isActive(player: Player): Boolean =
     val container = player.getPersistentDataContainer()
-    val mode = container.get(plugin.modeDataKey, PersistentDataType.STRING)
+    val mode = container.get(plugin.modeNameDataKey, PersistentDataType.STRING)
     mode == MODE_NAME
 
   def activate(player: Player): Unit =
     val container = player.getPersistentDataContainer()
-    container.set(plugin.modeDataKey, PersistentDataType.STRING, MODE_NAME)
+    container.set(plugin.modeNameDataKey, PersistentDataType.STRING, MODE_NAME)
     notifyActive(player)
 
   private def getBossBarKey(player: Player): NamespacedKey =
@@ -75,7 +75,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
 
   def inactivate(player: Player): Unit =
     val container = player.getPersistentDataContainer()
-    container.remove(plugin.modeDataKey)
+    container.remove(plugin.modeNameDataKey)
 
     val bar = getBossBar(player)
     if bar != null then

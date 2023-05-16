@@ -33,7 +33,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
     val book = ItemStack(Material.KNOWLEDGE_BOOK)
     val meta = book.getItemMeta
     meta.getPersistentDataContainer.set(
-      plugin.modeDataKey,
+      plugin.modeNameDataKey,
       PersistentDataType.STRING,
       modeName
     )
@@ -47,7 +47,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
 
     // if the book has no tag for the mode
     return item.getItemMeta.getPersistentDataContainer.get(
-      plugin.modeDataKey,
+      plugin.modeNameDataKey,
       PersistentDataType.STRING
     )
 
