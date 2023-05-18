@@ -13,6 +13,7 @@ class FarmerMode(plugin: MODalPlugin) extends Mode(plugin):
   override val MODE_NAME: String = "farmer"
   override val MODE_EXP_COST: Int = 5
   override val MODE_MATERIAL: Material = Material.GOLDEN_HOE
+  override val MODE_CAPACITY: Int = 128
 
   def seedOf(block: Block): Material =
     block.getType.name match
@@ -45,6 +46,9 @@ class FarmerMode(plugin: MODalPlugin) extends Mode(plugin):
     val removed = player.getInventory().removeItem(item)
     // (there's no seed)
     if !removed.isEmpty then return
+
+    // consume capacity
+    consume(player)
 
     // set block to younuest state
     val typ = block.getType

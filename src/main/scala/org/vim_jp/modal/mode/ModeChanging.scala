@@ -1,6 +1,5 @@
 package org.vim_jp.modal.mode;
 
-import collection.mutable
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -18,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.MODalPlugin
 
 import scala.jdk.CollectionConverters._
+import collection.mutable
 
 object ModeChanging:
   private val modeForMaterial = mutable.Map[Material, Mode]()
@@ -33,7 +33,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
     val book = ItemStack(Material.KNOWLEDGE_BOOK)
     val meta = book.getItemMeta
     meta.getPersistentDataContainer.set(
-      plugin.modeDataKey,
+      plugin.modeNameDataKey,
       PersistentDataType.STRING,
       modeName
     )
@@ -47,7 +47,7 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
 
     // if the book has no tag for the mode
     return item.getItemMeta.getPersistentDataContainer.get(
-      plugin.modeDataKey,
+      plugin.modeNameDataKey,
       PersistentDataType.STRING
     )
 
@@ -56,13 +56,14 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
   def onPrepareAnvil(event: PrepareAnvilEvent): Unit =
     val inv: AnvilInventory = event.getInventory()
 
-    val mode = ModeChanging.modeForMaterial(
-      inv.getItem(inv.first(Material.BOOK) match
-          case 0 => 1
-          case 1 => 0
-          case _ => return
-        ).getType
+    val material = inv.getItem(inv.first(Material.BOOK) match
+      case 0 => 1
+      case 1 => 0
+      case _ => return
     )
+    if material == null then return
+
+    val mode = ModeChanging.modeForMaterial(material.getType)
 
     if mode == null then return
 
