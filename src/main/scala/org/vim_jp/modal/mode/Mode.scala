@@ -72,7 +72,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
           plugin.modeCapacityDataKey,
           PersistentDataType.INTEGER
         )
-      case _ => current.get
+      case Some(v) => v
     if cur == 0 || cur == null then
       val bar = getBossBar(player)
       if bar != null then
