@@ -125,9 +125,16 @@ class ModeChanging(plugin: MODalPlugin) extends Listener:
   // Handle usage of the Mode Changer
   @EventHandler
   def onPlayerInteract(event: PlayerInteractEvent): Unit =
-    val action = event.getAction
-    if action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK
-    then return
+    val actionType = event.getAction match
+      case  Action.RIGHT_CLICK_AIR =>
+        "AIR"
+      case  Action.RIGHT_CLICK_BLOCK => {
+        if event.getClickedBlock.getType.isInteractable then null
+        else "BLOCK"
+      }
+      case _ => null
+
+    if actionType == null then return
 
     val modeName = getChangingMode(event.getItem)
     if modeName == null then return
