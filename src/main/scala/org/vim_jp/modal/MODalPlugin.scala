@@ -12,11 +12,10 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.SpectralArrow
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitRunnable
 import org.vim_jp.modal.mode.FarmerMode
+import org.vim_jp.modal.mode.KikoriMode
 import org.vim_jp.modal.mode.ModeChanging
 
 import java.io.BufferedReader
@@ -32,15 +31,13 @@ class MODalPlugin extends JavaPlugin:
   val modeNameDataKey = NamespacedKey(outer, MODalPlugin.MODE_NAME_DATA_KEY)
   val modeCapacityDataKey =
     NamespacedKey(outer, MODalPlugin.MODE_CAPACITY_DATA_KEY)
-  val modes = Set(FarmerMode(this))
+  val modes = Set(FarmerMode(this), KikoriMode(this))
 
   override def onEnable(): Unit =
     val server = getServer
 
-    // TODO: When the Kikori implements Mode, "ModeChanging" should call registerEvents
     val pluginManager = server.getPluginManager
     pluginManager.registerEvents(ModeChanging(this), this)
-    pluginManager.registerEvents(Kikori(), this)
     pluginManager.registerEvents(ArrowWarp(), this)
     modes.foreach(m => {
       ModeChanging.registerMode(m)
@@ -86,49 +83,6 @@ class MODalPlugin extends JavaPlugin:
     def action(player: Player, args: Array[String]): Boolean =
       modes.filter(m => m.isActive(player)).foreach(m => m.inactivate(player))
       true
-
-  class Kikori extends Listener:
-    def isLog(block: Block): Boolean =
-      val name = block.getType.name
-      name.endsWith("_LOG") ||
-      name.endsWith("_STEM") ||
-      name == "MANGROVE_ROOTS"
-
-    def tryBreak(player: Player, block: Block): Unit =
-      new BukkitRunnable {
-        override def run(): Unit =
-          if !player.isValid || !isLog(block) then return
-
-          val y = -1
-          val underBlocks = for
-            x <- -1 to 1
-            z <- -1 to 1
-          yield block.getRelative(x, y, z)
-          if underBlocks.forall(!_.getType.isOccluding) then
-            block.breakNaturally()
-            onLogBreak(player, block)
-      }.runTaskLater(outer, 1)
-
-    def onLogBreak(player: Player, block: Block): Unit =
-      for
-        y <- 0 to 1
-        x <- -1 to 1
-        z <- -1 to 1
-        if x != 0 || y != 0 || z != 0
-      do
-        val nextBlock = block.getRelative(x, y, z)
-        tryBreak(player, nextBlock)
-
-    @EventHandler
-    def onBlockBreak(event: BlockBreakEvent): Unit =
-      val player = event.getPlayer
-      val block = event.getBlock: Block
-
-      if !isLog(block) then return
-
-      val itemInHand = player.getInventory.getItemInMainHand
-      if itemInHand.getType == Material.GOLDEN_AXE then
-        onLogBreak(player, block)
 
   class ArrowWarp extends Listener:
     def isSafeBlock(block: Block): Boolean =
