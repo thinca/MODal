@@ -20,11 +20,9 @@ object MODalPlugin:
   val MODE_CAPACITY_DATA_KEY: String = "mode-capacity"
 
 class MODalPlugin extends JavaPlugin:
-  outer =>
-
-  val modeNameDataKey = NamespacedKey(outer, MODalPlugin.MODE_NAME_DATA_KEY)
+  val modeNameDataKey = NamespacedKey(this, MODalPlugin.MODE_NAME_DATA_KEY)
   val modeCapacityDataKey =
-    NamespacedKey(outer, MODalPlugin.MODE_CAPACITY_DATA_KEY)
+    NamespacedKey(this, MODalPlugin.MODE_CAPACITY_DATA_KEY)
   val modes = Set(FarmerMode(this), KikoriMode(this), TeleporterMode(this))
 
   override def onEnable(): Unit =
@@ -37,10 +35,10 @@ class MODalPlugin extends JavaPlugin:
       pluginManager.registerEvents(m, this)
     })
 
-    this.getCommand("change").setExecutor(ChangeCommand())
-    this.getCommand("inactivate").setExecutor(InactivateCommand())
+    getCommand("change").setExecutor(ChangeCommand())
+    getCommand("inactivate").setExecutor(InactivateCommand())
 
-    val stream = outer.getResource("commit_hash")
+    val stream = getResource("commit_hash")
     if stream != null then
       val br = BufferedReader(InputStreamReader(stream))
       val hash = br.readLine
