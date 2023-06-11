@@ -1,4 +1,5 @@
 build:
+	docker compose build
 	sbt package
 .PHONY: build
 
@@ -11,7 +12,15 @@ start: install
 	docker compose up -d
 .PHONY: start
 
-reload: install
-	# You need to install PlugManX plugin
-	docker compose exec minecraft rcon-cli plugman reload MODal
-.PHONY: reload
+stop:
+	docker compose down
+.PHONY: stop
+
+run: install
+	docker compose up
+.PHONY: run
+
+# reload: install
+# 	# You need to install PlugManX plugin
+# 	docker compose exec minecraft /home/mc-user/mc/rcon -p "mc" -c /home/mc-user/mc/rcon.yaml plugman reload MODal
+# .PHONY: reload
