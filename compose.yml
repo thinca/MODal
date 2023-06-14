@@ -10,7 +10,7 @@ services:
     environment:
       TZ: 'Asia/Tokyo'
       TYPE: 'SPIGOT'
-      VERSION: '1.19.4'
+      VERSION: '1.20.1'
       EULA: 'TRUE'
       OPS: "${MINECRAFT_OPS_PLAYER_ID}"
       MOTD: 'A Minecraft Server for vim-jp!'

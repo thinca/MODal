@@ -1,7 +1,7 @@
 name: 'MODal'
 main: 'org.vim_jp.modal.MODalPlugin'
 version: '0.1.0'
-api-version: '1.19'
+api-version: '1.20'
 libraries:
   - 'org.scala-lang:scala3-library_3:3.3.0'
 commands:
