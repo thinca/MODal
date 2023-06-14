@@ -13,5 +13,5 @@ lazy val root = project
     ),
 
     resolvers += "spigot-repo" at "https://hub.spigotmc.org/nexus/content/repositories/snapshots/",
-    libraryDependencies += "org.spigotmc" % "spigot-api" % "1.19.4-R0.1-SNAPSHOT",
+    libraryDependencies += "org.spigotmc" % "spigot-api" % "1.20.1-R0.1-SNAPSHOT",
   )
