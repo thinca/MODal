@@ -20,17 +20,21 @@ class KikoriMode(plugin: MODalPlugin) extends Mode(plugin):
     name.endsWith("_STEM") ||
     name == "MANGROVE_ROOTS"
 
+  def isLeave(block: Block): Boolean =
+    val name = block.getType.name
+    name.endsWith("_LEAVES")
+
   def tryBreak(player: Player, block: Block): Unit =
     new BukkitRunnable {
       override def run(): Unit =
-        if !player.isValid || !isLog(block) then return
+        if !player.isValid || (!isLog(block) && !isLeave(block)) then return
 
         val y = -1
         val underBlocks = for
           x <- -1 to 1
           z <- -1 to 1
         yield block.getRelative(x, y, z)
-        if underBlocks.forall(!_.getType.isOccluding) then
+        if underBlocks.forall(b => !isLog(b)) then
           block.breakNaturally()
           onLogBreak(player, block)
     }.runTaskLater(plugin, 1)
