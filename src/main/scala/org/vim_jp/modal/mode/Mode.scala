@@ -12,6 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.persistence.PersistentDataType
 import org.vim_jp.modal.MODalPlugin
 
@@ -108,6 +109,11 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
   def onPlayerJoin(event: PlayerJoinEvent): Unit =
     val player = event.getPlayer
     if isActive(player) then updateCapacityView(player)
+
+  @EventHandler
+  def onPlayerRespawnEvent(event: PlayerRespawnEvent): Unit =
+    val player = event.getPlayer
+    inactivate(player)
 
   def consume(player: Player): Unit =
     val container = player.getPersistentDataContainer()
