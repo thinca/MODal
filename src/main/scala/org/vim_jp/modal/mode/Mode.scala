@@ -107,9 +107,7 @@ abstract class Mode(plugin: MODalPlugin) extends Listener:
   @EventHandler
   def onPlayerJoin(event: PlayerJoinEvent): Unit =
     val player = event.getPlayer
-    if isActive(player) then
-      notifyActive(player)
-      updateCapacityView(player)
+    if isActive(player) then updateCapacityView(player)
 
   def consume(player: Player): Unit =
     val container = player.getPersistentDataContainer()
