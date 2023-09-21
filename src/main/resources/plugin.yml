@@ -9,5 +9,5 @@ commands:
     description: Change mode of the player
     usage: "Usage: /<command> [mode]"
   inactivate:
-    descritpion: Inactivate mode of the player
+    description: Inactivate mode of the player
     usage: "Usage: /<command>"
